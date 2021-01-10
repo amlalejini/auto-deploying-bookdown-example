@@ -1,0 +1,34 @@
+# Rolling Dice
+
+## Dependencies
+
+```{r, message=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(cowplot)
+source("https://gist.githubusercontent.com/benmarwick/2a1bb0133ff568cbe28d/raw/fb53bd97121f7f9ce947837ef1a4c65a73bffb3f/geom_flat_violin.R")
+```
+
+## Setup
+
+```{r}
+data <- read.csv("data/roll_data.csv")
+data$die_combo <- paste0(data$die.1, "+", data$die.2)
+data$die_combo <- as.factor(data$die_combo)
+data$die.1 <- as.factor(data$die.1)
+data$die.2 <- as.factor(data$die.2)
+data$result <- as.factor(data$value)
+
+theme_set(theme_cowplot())
+```
+
+## What values are most common from adding together the results of two twelve-sided dice?
+
+We rolled two twelve-sided dice `r nrow(filter(data, die_combo=="12+12"))` times.
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(data=filter(data, die_combo=="12+12"), aes(x=result, color=die_combo, fill=die_combo)) +
+  geom_histogram(stat="count") +
+  facet_wrap(~die_combo, ncol=1) +
+  theme(legend.position="none")
+```
